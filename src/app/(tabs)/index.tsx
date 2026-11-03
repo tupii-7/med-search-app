@@ -24,10 +24,7 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.brandRow}>
-            <View style={styles.logo}><ThemedText style={styles.logoText}>+</ThemedText></View>
-            <ThemedText style={styles.brand}>MedSearch</ThemedText>
-          </View>
+          <ThemedText style={styles.brand}>MedSearch</ThemedText>
           <View style={styles.hero}>
             <ThemedText type="subtitle" style={styles.title}>Find medicine information, made easier.</ThemedText>
             <ThemedText themeColor="textSecondary" style={styles.subtitle}>
@@ -55,10 +52,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   safeArea: { flex: 1 },
   content: { padding: Spacing.four, gap: Spacing.three, flexGrow: 1 },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two, marginBottom: Spacing.four },
-  logo: { width: 38, height: 38, borderRadius: 12, backgroundColor: Colors.light.accent, alignItems: 'center', justifyContent: 'center' },
-  logoText: { color: '#FFFFFF', fontSize: 28, fontWeight: '700', lineHeight: 32 },
-  brand: { fontSize: 22, fontWeight: '800', color: Colors.light.navy },
+  brand: { fontSize: 22, fontWeight: '800', color: Colors.light.navy, marginBottom: Spacing.four },
   hero: { gap: Spacing.two, marginBottom: Spacing.two },
   title: { fontSize: 34, lineHeight: 40, color: Colors.light.navy },
   subtitle: { fontSize: 17, lineHeight: 25 },

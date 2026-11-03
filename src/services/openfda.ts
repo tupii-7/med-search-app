@@ -1,6 +1,7 @@
 import type { DrugLabel, OpenFdaResponse } from '@/types/drug';
 
 const API_URL = 'https://api.fda.gov/drug/label.json';
+const labelCache = new Map<string, DrugLabel>();
 
 function getFirstValue(values?: string[]) {
   return values?.find((value) => value.trim())?.trim() ?? '';
@@ -11,7 +12,9 @@ export function getDrugName(label: DrugLabel) {
 }
 
 export function getDrugId(label: DrugLabel, index: number) {
-  return label.id ?? `${getDrugName(label)}-${getFirstValue(label.openfda?.manufacturer_name)}-${index}`;
+  const id = label.id ?? `${getDrugName(label)}-${getFirstValue(label.openfda?.manufacturer_name)}-${index}`;
+  labelCache.set(id, label);
+  return id;
 }
 
 function buildUrl(search: string, limit = 25) {
@@ -31,19 +34,32 @@ async function request(url: string): Promise<DrugLabel[]> {
 }
 
 export async function searchDrugs(query: string) {
-  const search = `openfda.brand_name:"${query}" OR openfda.generic_name:"${query}"`;
+  const normalizedQuery = query.trim().replace(/[^a-zA-Z0-9\s-]/g, ' ');
+  const search = `(openfda.brand_name:${normalizedQuery} OR openfda.generic_name:${normalizedQuery})`;
   return request(buildUrl(search));
 }
 
 export async function getDrugById(id: string, fallbackSearch?: string, fallbackIndex = 0) {
+  const cachedLabel = labelCache.get(id);
+  if (cachedLabel) return cachedLabel;
+
   if (!id.includes('-')) {
-    const matches = await request(buildUrl(`id:"${id}"`, 1));
-    if (matches[0]) return matches[0];
+    try {
+      const matches = await request(buildUrl(`id:"${id}"`, 1));
+      if (matches[0]) {
+        labelCache.set(id, matches[0]);
+        return matches[0];
+      }
+    } catch {
+      // The selected search result remains the reliable fallback when an API id lookup fails.
+    }
   }
 
   if (!fallbackSearch) return undefined;
   const matches = await searchDrugs(fallbackSearch);
-  return matches[fallbackIndex];
+  const selectedLabel = matches[fallbackIndex];
+  if (selectedLabel) labelCache.set(id, selectedLabel);
+  return selectedLabel;
 }
 
 export function getSourceUrl(label: DrugLabel) {

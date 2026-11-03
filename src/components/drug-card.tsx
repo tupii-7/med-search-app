@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { getDrugName } from '@/services/openfda';
 import type { DrugLabel } from '@/types/drug';
 
@@ -11,12 +12,13 @@ type DrugCardProps = {
 };
 
 export function DrugCard({ drug, onPress }: DrugCardProps) {
+  const theme = useTheme();
   const generic = drug.openfda?.generic_name?.[0] ?? 'Generic name not available';
   const manufacturer = drug.openfda?.manufacturer_name?.[0] ?? 'Manufacturer not available';
   const product = drug.openfda?.product_type?.[0] ?? 'Drug label';
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [{ backgroundColor: theme.card, borderColor: theme.border }, styles.card, pressed && styles.pressed]}>
       <View style={styles.icon}>
         <ThemedText style={styles.iconText}>+</ThemedText>
       </View>
@@ -24,7 +26,7 @@ export function DrugCard({ drug, onPress }: DrugCardProps) {
         <ThemedText style={styles.brand}>{getDrugName(drug)}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">{generic}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">{manufacturer}</ThemedText>
-        <ThemedText type="small" style={styles.product}>{product}</ThemedText>
+        <ThemedText type="small" style={[styles.product, { color: theme.accent }]}>{product}</ThemedText>
       </View>
       <ThemedText style={styles.chevron}>›</ThemedText>
     </Pressable>
