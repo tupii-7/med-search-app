@@ -1,98 +1,71 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { Keyboard, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
+import { SearchBar } from '@/components/search-bar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+const DISCLAIMER =
+  'MedSearch is an informational reference application. The information provided is sourced from U.S. FDA drug labeling and is not intended to replace professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional before making medication-related decisions.';
 
 export default function HomeScreen() {
+  const [query, setQuery] = useState('');
+  const submit = () => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    Keyboard.dismiss();
+    router.push({ pathname: '/search', params: { q: trimmed } });
+  };
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={styles.brandRow}>
+            <View style={styles.logo}><ThemedText style={styles.logoText}>+</ThemedText></View>
+            <ThemedText style={styles.brand}>MedSearch</ThemedText>
+          </View>
+          <View style={styles.hero}>
+            <ThemedText type="subtitle" style={styles.title}>Find medicine information, made easier.</ThemedText>
+            <ThemedText themeColor="textSecondary" style={styles.subtitle}>
+              Search trusted U.S. FDA drug labels in a clear, organized format.
+            </ThemedText>
+          </View>
+          <SearchBar value={query} onChangeText={setQuery} onSubmit={submit} />
+          <Pressable onPress={submit} style={({ pressed }) => [styles.searchButton, pressed && styles.pressed]}>
+            <ThemedText style={styles.searchButtonText}>Search drug labels</ThemedText>
+          </Pressable>
+          <View style={styles.infoCard}>
+            <ThemedText style={styles.infoTitle}>A reference, not a diagnosis</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Explore label information about uses, dosage, warnings, side effects, and interactions.
+            </ThemedText>
+          </View>
+          <ThemedText style={styles.disclaimer}>{DISCLAIMER}</ThemedText>
+        </ScrollView>
       </SafeAreaView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
+  container: { flex: 1 },
+  safeArea: { flex: 1 },
+  content: { padding: Spacing.four, gap: Spacing.three, flexGrow: 1 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two, marginBottom: Spacing.four },
+  logo: { width: 38, height: 38, borderRadius: 12, backgroundColor: Colors.light.accent, alignItems: 'center', justifyContent: 'center' },
+  logoText: { color: '#FFFFFF', fontSize: 28, fontWeight: '700', lineHeight: 32 },
+  brand: { fontSize: 22, fontWeight: '800', color: Colors.light.navy },
+  hero: { gap: Spacing.two, marginBottom: Spacing.two },
+  title: { fontSize: 34, lineHeight: 40, color: Colors.light.navy },
+  subtitle: { fontSize: 17, lineHeight: 25 },
+  searchButton: { backgroundColor: Colors.light.accent, minHeight: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  searchButtonText: { color: '#FFFFFF', fontWeight: '700' },
+  pressed: { opacity: 0.75 },
+  infoCard: { backgroundColor: '#E8F4F7', borderRadius: 16, padding: Spacing.three, gap: Spacing.one, marginTop: Spacing.two },
+  infoTitle: { color: Colors.light.navy, fontWeight: '700' },
+  disclaimer: { fontSize: 12, lineHeight: 18, color: Colors.light.textSecondary, marginTop: 'auto' },
 });
