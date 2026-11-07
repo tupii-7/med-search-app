@@ -7,8 +7,30 @@ function getFirstValue(values?: string[]) {
   return values?.find((value) => value.trim())?.trim() ?? '';
 }
 
+function cleanLabelText(value: string) {
+  return value
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6])>/gi, ' ')
+    .replace(/<(p|div|li|h[1-6])[^>]*>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function getDrugName(label: DrugLabel) {
   return getFirstValue(label.openfda?.brand_name) || getFirstValue(label.openfda?.generic_name) || 'Unnamed medicine';
+}
+
+export function getDrugPreview(label: DrugLabel) {
+  const source = getFirstValue(label.description) || getFirstValue(label.indications_and_usage);
+  const cleaned = cleanLabelText(source);
+  if (!cleaned) return 'FDA label details are available on the medicine page.';
+  if (cleaned.length <= 180) return cleaned;
+  return `${cleaned.slice(0, 177).trimEnd()}...`;
 }
 
 export function getDrugId(label: DrugLabel, index: number) {
