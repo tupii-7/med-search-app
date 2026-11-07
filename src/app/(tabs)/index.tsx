@@ -7,11 +7,10 @@ import { SearchBar } from '@/components/search-bar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors, Spacing } from '@/constants/theme';
-
-const DISCLAIMER =
-  'MedSearch is an informational reference application. The information provided is sourced from U.S. FDA drug labeling and is not intended to replace professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional before making medication-related decisions.';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function HomeScreen() {
+  const theme = useTheme();
   const [query, setQuery] = useState('');
   const submit = () => {
     const trimmed = query.trim();
@@ -24,24 +23,20 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <ThemedText style={styles.brand}>MedSearch</ThemedText>
+          <ThemedText style={[styles.brand, { color: theme.navy }]}>MedSearch</ThemedText>
           <View style={styles.hero}>
-            <ThemedText type="subtitle" style={styles.title}>Find medicine information, made easier.</ThemedText>
-            <ThemedText themeColor="textSecondary" style={styles.subtitle}>
-              Search trusted U.S. FDA drug labels in a clear, organized format.
-            </ThemedText>
+            <ThemedText type="subtitle" style={[styles.title, { color: theme.navy }]}>Cari informasi obat.</ThemedText>
+            <ThemedText themeColor="textSecondary" style={styles.subtitle}>Data label resmi U.S. FDA.</ThemedText>
           </View>
           <SearchBar value={query} onChangeText={setQuery} onSubmit={submit} />
-          <Pressable onPress={submit} style={({ pressed }) => [styles.searchButton, pressed && styles.pressed]}>
-            <ThemedText style={styles.searchButtonText}>Search drug labels</ThemedText>
+          <Pressable onPress={submit} style={({ pressed }) => [styles.searchButton, { backgroundColor: theme.accent }, pressed && styles.pressed]}>
+            <ThemedText style={styles.searchButtonText}>Cari obat</ThemedText>
           </Pressable>
-          <View style={styles.infoCard}>
-            <ThemedText style={styles.infoTitle}>A reference, not a diagnosis</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Explore label information about uses, dosage, warnings, side effects, and interactions.
-            </ThemedText>
+          <View style={[styles.infoCard, { backgroundColor: theme.backgroundElement }]}>
+            <ThemedText style={[styles.infoTitle, { color: theme.navy }]}>Referensi obat</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">Baca kegunaan, dosis, dan peringatan.</ThemedText>
           </View>
-          <ThemedText style={styles.disclaimer}>{DISCLAIMER}</ThemedText>
+          <ThemedText style={styles.disclaimer}>Bukan pengganti saran dokter.</ThemedText>
         </ScrollView>
       </SafeAreaView>
     </ThemedView>

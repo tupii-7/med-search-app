@@ -8,10 +8,12 @@ import { SearchBar } from '@/components/search-bar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { getDrugId, searchDrugs } from '@/services/openfda';
 import type { DrugLabel } from '@/types/drug';
 
 export default function SearchScreen() {
+  const theme = useTheme();
   const params = useLocalSearchParams<{ q?: string }>();
   const initialQuery = typeof params.q === 'string' ? params.q : '';
   const [query, setQuery] = useState(initialQuery);
@@ -46,15 +48,15 @@ export default function SearchScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} hitSlop={10}><ThemedText style={styles.back}>Back</ThemedText></Pressable>
-          <ThemedText style={styles.heading}>Search drug labels</ThemedText>
+          <ThemedText style={[styles.heading, { color: theme.navy }]}>Search drug labels</ThemedText>
         </View>
         <View style={styles.search}><SearchBar value={query} onChangeText={setQuery} onSubmit={() => void runSearch(query)} autoFocus={!initialQuery} /></View>
         {loading ? (
-          <View style={styles.state}><ActivityIndicator size="large" color={Colors.light.accent} /><ThemedText themeColor="textSecondary">Searching U.S. FDA labels...</ThemedText></View>
+          <View style={styles.state}><ActivityIndicator size="large" color={theme.accent} /><ThemedText themeColor="textSecondary">Searching FDA labels...</ThemedText></View>
         ) : error ? (
-          <View style={styles.state}><ThemedText style={styles.stateTitle}>We couldn&apos;t complete that search</ThemedText><ThemedText themeColor="textSecondary" style={styles.center}>{error}</ThemedText><Pressable onPress={() => void runSearch(query)} style={styles.retry}><ThemedText style={styles.retryText}>Try again</ThemedText></Pressable></View>
+          <View style={styles.state}><ThemedText style={[styles.stateTitle, { color: theme.navy }]}>Search failed</ThemedText><ThemedText themeColor="textSecondary" style={styles.center}>{error}</ThemedText><Pressable onPress={() => void runSearch(query)} style={[styles.retry, { backgroundColor: theme.accent }]}><ThemedText style={styles.retryText}>Try again</ThemedText></Pressable></View>
         ) : results.length === 0 ? (
-          <View style={styles.state}><ThemedText style={styles.stateTitle}>{query ? 'No labels found' : 'Search for a medicine'}</ThemedText><ThemedText themeColor="textSecondary" style={styles.center}>{query ? 'Try a brand or generic name with a different spelling.' : 'Enter a medicine name above to get started.'}</ThemedText></View>
+          <View style={styles.state}><ThemedText style={[styles.stateTitle, { color: theme.navy }]}>{query ? 'No labels found' : 'Search for a medicine'}</ThemedText><ThemedText themeColor="textSecondary" style={styles.center}>{query ? 'Try another spelling.' : 'Enter a medicine name above.'}</ThemedText></View>
         ) : (
           <FlatList
             data={results}

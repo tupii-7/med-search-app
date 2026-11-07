@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Colors, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 const MISSING = 'Information not available in the provided drug label.';
@@ -90,16 +90,14 @@ export function InfoSection({ title, values, collapsible = false }: InfoSectionP
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: Colors.light.card,
     borderRadius: 16,
     padding: Spacing.three,
     gap: Spacing.two,
     borderWidth: 1,
-    borderColor: Colors.light.border,
   },
   headingRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: Spacing.two },
-  heading: { fontSize: 18, fontWeight: '700', color: Colors.light.navy },
-  action: { color: Colors.light.accent, fontWeight: '700' },
+  heading: { fontSize: 18, fontWeight: '700' },
+  action: { fontWeight: '700' },
   body: { gap: Spacing.two },
   paragraph: { lineHeight: 23 },
 });
