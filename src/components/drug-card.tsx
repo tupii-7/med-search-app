@@ -19,9 +19,6 @@ export function DrugCard({ drug, onPress }: DrugCardProps) {
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [{ backgroundColor: theme.card, borderColor: theme.border }, styles.card, pressed && styles.pressed]}>
-      <View style={styles.icon}>
-        <ThemedText style={styles.iconText}>+</ThemedText>
-      </View>
       <View style={styles.content}>
         <ThemedText style={styles.brand}>{getDrugName(drug)}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>{generic}</ThemedText>
@@ -49,15 +46,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.light.border,
   },
   pressed: { opacity: 0.7 },
-  icon: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: '#E8F4F7',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconText: { color: Colors.light.accent, fontSize: 24, fontWeight: '700', lineHeight: 26 },
   chevron: { color: Colors.light.textSecondary, fontSize: 26, lineHeight: 32 },
   content: { flex: 1, gap: 3 },
   brand: { fontSize: 17, fontWeight: '700', marginBottom: 1 },
