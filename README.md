@@ -1,56 +1,106 @@
-# Welcome to your Expo app 👋
+# MedSearch
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+MedSearch adalah aplikasi mobile untuk mencari dan membaca informasi label obat. Data yang ditampilkan bersumber dari **U.S. Food and Drug Administration (FDA)** melalui [openFDA Drug Label API](https://open.fda.gov/apis/drug/label/).
 
-## Get started
+> **Peringatan:** MedSearch hanya untuk referensi informasi dan bukan pengganti diagnosis, resep, atau saran dari tenaga kesehatan.
 
-1. Install dependencies
+## Fitur
+
+- Mencari obat berdasarkan nama dagang atau nama generik.
+- Menampilkan hingga 25 hasil label obat dari openFDA.
+- Membaca informasi obat, termasuk:
+  - deskripsi dan kegunaan;
+  - dosis dan cara penggunaan;
+  - efek samping;
+  - peringatan dan kontraindikasi;
+  - interaksi obat.
+- Menyimpan label obat ke daftar favorit selama sesi aplikasi.
+- Mendukung mode terang dan mode gelap.
+- Tersedia di Android, iOS, dan web melalui Expo.
+
+## Teknologi
+
+- [Expo](https://expo.dev/) SDK 58
+- [React Native](https://reactnative.dev/) dan React 19
+- [Expo Router](https://docs.expo.dev/router/introduction/) untuk navigasi berbasis file
+- TypeScript
+- openFDA Drug Label API
+
+## Persyaratan
+
+- Node.js LTS
+- npm
+- Android Studio dan emulator Android, atau
+- Xcode dan iOS Simulator (macOS), atau
+- aplikasi Expo Go untuk pengembangan di perangkat
+
+## Menjalankan proyek
+
+1. Clone repository dan masuk ke direktorinya:
+
+   ```bash
+   git clone https://github.com/tupii-7/med-search-app.git
+   cd med-search-app
+   ```
+
+2. Pasang dependency:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Jalankan development server:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   Setelah server berjalan, pilih target dari terminal atau buka QR code dengan Expo Go.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Perintah yang tersedia
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+| Perintah | Keterangan |
+| --- | --- |
+| `npm start` | Menjalankan Expo development server |
+| `npm run android` | Menjalankan proyek pada Android |
+| `npm run ios` | Menjalankan proyek pada iOS |
+| `npm run web` | Menjalankan proyek pada web |
+| `npm run lint` | Menjalankan ESLint |
+| `npm run reset-project` | Memindahkan kode starter ke folder `example` dan mengosongkan `src/app` |
 
-## Get a fresh project
+## Struktur utama
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+src/
+├── app/                 # Screen dan route Expo Router
+│   ├── (tabs)/          # Beranda, favorit, pengaturan, dan tentang
+│   ├── drug/[id].tsx    # Detail label obat
+│   └── search.tsx       # Hasil pencarian
+├── components/          # Komponen UI yang dapat digunakan ulang
+├── constants/           # Tema dan nilai desain
+├── hooks/               # Hook tema dan color scheme
+├── services/
+│   ├── favorites.ts     # State favorit selama sesi
+│   └── openfda.ts       # Akses dan pemrosesan data openFDA
+└── types/               # Definisi tipe data
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Sumber data
 
-### Other setup steps
+MedSearch mengakses endpoint berikut secara langsung dari aplikasi:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```text
+https://api.fda.gov/drug/label.json
+```
 
-## Learn more
+Tidak diperlukan API key. Ketersediaan dan kelengkapan informasi bergantung pada data label yang disediakan oleh openFDA. Gunakan tautan **Source: OpenFDA** pada halaman detail untuk membuka sumber data label.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Catatan pengembangan
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Favorit dikelola di memori aplikasi dan belum disimpan secara permanen.
+- Folder `ios/` dan `android/` tidak digunakan dalam repository ini; konfigurasi native dikelola oleh Expo.
+- Route aplikasi berada di `src/app/`. Komponen, hook, service, dan tipe data diletakkan di luar folder tersebut.
 
-## Join the community
+## Lisensi
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Lihat [LICENSE](./LICENSE).
